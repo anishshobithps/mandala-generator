@@ -97,16 +97,7 @@ export function ControlPanel({
               Generator
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              size="icon-xs"
-              variant="ghost"
-              onClick={() => onRandomize(locked)}
-              aria-label="Randomize mandala pattern"
-              className="transition-colors hover:text-foreground"
-            >
-              <ShuffleIcon size={14} />
-            </Button>
+          <div className="flex items-center gap-1.5">
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
@@ -209,45 +200,6 @@ function PanelContent({
   return (
     <div className="flex flex-col gap-4 md:gap-6">
       {/* First-run help section */}
-      <Collapsible
-        open={showHelp}
-        onOpenChange={setShowHelp}
-        defaultOpen={false}
-      >
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="group h-auto justify-start gap-2 px-2 py-1.5 text-xs font-normal transition-colors hover:bg-muted/40 hover:text-foreground"
-          >
-            <CaretDownIcon
-              size={12}
-              className="shrink-0 transition-transform duration-200 group-hover:text-foreground/70"
-            />
-            Getting Started
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-2 pt-2 pb-4 text-[13px] leading-relaxed text-foreground/80">
-          <p>
-            <strong>Rings</strong>: Number of concentric layers
-          </p>
-          <p>
-            <strong>Symmetry</strong>: Rotational sections (more = more
-            symmetric)
-          </p>
-          <p>
-            <strong>Complexity</strong>: Detail density
-          </p>
-          <p>
-            <strong>Scale</strong>: Size of the mandala
-          </p>
-          <p>
-            <strong>Lock</strong> values to keep them when randomizing
-          </p>
-        </CollapsibleContent>
-      </Collapsible>
-
-      <Separator />
       <section className="flex flex-col gap-2 md:gap-4">
         <SliderField
           label="Rings"
