@@ -238,17 +238,16 @@ function PanelContent({
           onValueChange={([v]) => onUpdate({ scale: v })}
           format={(v) => v.toFixed(2)}
         />
-        {config.animate && (
-          <SliderField
-            label="Speed"
-            value={config.speed}
-            min={0}
-            max={10}
-            step={1}
-            onValueChange={([v]) => onUpdate({ speed: v })}
-            title="Animation speed (only visible when Animate is enabled)"
-          />
-        )}
+        <SliderField
+          label="Speed"
+          value={config.speed}
+          min={0}
+          max={10}
+          step={1}
+          locked={!config.animate}
+          onValueChange={([v]) => onUpdate({ speed: v })}
+          title="Animation speed (only visible when Animate is enabled)"
+        />
       </section>
 
       <Separator />
