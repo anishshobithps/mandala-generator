@@ -4,6 +4,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  useTransition,
 } from "react"
 
 import { useAnimationFrame } from "@/hooks/use-animation-frame"
@@ -23,6 +24,7 @@ export function MandalaCanvas({ config }: MandalaCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rendererRef = useRef<MandalaRenderer>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [, startTransition] = useTransition()
 
   const size = useCanvasSize(containerRef)
 
@@ -41,10 +43,14 @@ export function MandalaCanvas({ config }: MandalaCanvasProps) {
       }
 
       rendererRef.current = new MandalaRenderer(canvas, ctx)
-      setIsLoading(false)
+      startTransition(() => {
+        setIsLoading(false)
+      })
     } catch (error) {
       console.error("Failed to initialize canvas:", error)
-      setIsLoading(false)
+      startTransition(() => {
+        setIsLoading(false)
+      })
     }
   }, [])
 
