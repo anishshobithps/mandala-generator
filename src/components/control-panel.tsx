@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { formatHex, parse } from "culori"
-import { Shuffle, Lock, LockOpen, Sliders, X } from "@phosphor-icons/react"
+import { ShuffleIcon, LockIcon, LockOpenIcon, SlidersIcon, XIcon } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -62,7 +62,7 @@ export function ControlPanel({
   return (
     <>
       <aside className="hidden w-72 min-w-72 flex-col border-l border-border bg-card md:flex">
-        <div className="flex flex-shrink-0 items-baseline justify-between px-5 pt-6 pb-5">
+        <div className="flex shrink-0 items-baseline justify-between px-5 pt-6 pb-5">
           <div>
             <h1 className="font-heading text-base font-medium tracking-[0.15em] uppercase">
               Mandala
@@ -88,13 +88,13 @@ export function ControlPanel({
           onClick={() => onRandomize(locked)}
           aria-label="Randomize"
         >
-          <Shuffle size={18} />
+          <ShuffleIcon size={18} />
         </Button>
 
         <Drawer>
           <DrawerTrigger asChild>
             <Button size="icon" aria-label="Open settings">
-              <Sliders size={18} />
+              <SlidersIcon size={18} />
             </Button>
           </DrawerTrigger>
           <DrawerContent>
@@ -104,7 +104,7 @@ export function ControlPanel({
               </DrawerTitle>
               <DrawerClose asChild>
                 <Button variant="ghost" size="icon-sm">
-                  <X size={14} />
+                  <XIcon size={14} />
                 </Button>
               </DrawerClose>
             </DrawerHeader>
@@ -203,9 +203,9 @@ function PanelContent({
             aria-label={locked.colors ? "Unlock colors" : "Lock colors"}
           >
             {locked.colors ? (
-              <Lock size={12} className="text-foreground" />
+              <LockIcon size={12} className="text-foreground" />
             ) : (
-              <LockOpen size={12} />
+              <LockOpenIcon size={12} />
             )}
           </Button>
         </div>
@@ -264,7 +264,7 @@ function PanelContent({
       <Separator />
 
       <Button onClick={onRandomize} className="w-full gap-2">
-        <Shuffle size={14} />
+        <ShuffleIcon size={14} />
         Randomize
       </Button>
     </div>
@@ -317,9 +317,9 @@ function SliderField({
               aria-label={locked ? `Unlock ${label}` : `Lock ${label}`}
             >
               {locked ? (
-                <Lock size={11} className="text-foreground" />
+                <LockIcon size={11} className="text-foreground" />
               ) : (
-                <LockOpen size={11} />
+                <LockOpenIcon size={11} />
               )}
             </Button>
           )}
