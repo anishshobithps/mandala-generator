@@ -1,11 +1,22 @@
-import { DEFAULT_CONFIG } from "@/lib/defaults"
-
 import { MandalaCanvas } from "@/components/mandala-canvas"
+import { ControlPanel } from "@/components/control-panel"
+import { ErrorBoundary } from "@/components/error-boundary"
+import { useMandalaConfig } from "@/hooks/use-mangala-config"
 
 export default function App() {
+  const { config, update, updateRings, randomize } = useMandalaConfig()
+
   return (
-    <div className="h-dvh w-full overflow-hidden">
-      <MandalaCanvas config={DEFAULT_CONFIG} />
-    </div>
+    <ErrorBoundary>
+      <div className="flex h-dvh w-full overflow-hidden">
+        <MandalaCanvas config={config} />
+        <ControlPanel
+          config={config}
+          onUpdate={update}
+          onUpdateRings={updateRings}
+          onRandomize={randomize}
+        />
+      </div>
+    </ErrorBoundary>
   )
 }

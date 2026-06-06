@@ -14,6 +14,34 @@ import {
     renderTriangles,
 } from "./triangles";
 
+import {
+    renderDiamonds,
+} from "./diamonds";
+
+import {
+    renderPolygons,
+} from "./polygons";
+
+import {
+    renderWaves,
+} from "./waves";
+
+import {
+    renderCrosses,
+} from "./crosses";
+
+import {
+    renderTeardrop,
+} from "./teardrop";
+
+import {
+    renderChevron,
+} from "./chevron";
+
+import {
+    renderLotus,
+} from "./lotus";
+
 import type {
     PatternRenderer,
 } from "./types";
@@ -34,5 +62,33 @@ export const patternRegistry =
         [
             "triangles",
             renderTriangles,
+        ],
+        [
+            "diamonds",
+            renderDiamonds,
+        ],
+        [
+            "polygons",
+            renderPolygons,
+        ],
+        [
+            "waves",
+            renderWaves,
+        ],
+        [
+            "crosses",
+            renderCrosses,
+        ],
+        [
+            "teardrop",
+            renderTeardrop,
+        ],
+        [
+            "chevron",
+            renderChevron,
+        ],
+        [
+            "lotus",
+            renderLotus,
         ],
     ]);

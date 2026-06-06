@@ -1,4 +1,5 @@
 import {
+    useLayoutEffect,
     useEffect,
     useState,
 } from "react";
@@ -16,6 +17,22 @@ export function useCanvasSize(
             width: 0,
             height: 0,
         });
+
+    useLayoutEffect(() => {
+        const element =
+            containerRef.current;
+
+        if (!element) {
+            return;
+        }
+
+        setSize({
+            width:
+                element.clientWidth,
+            height:
+                element.clientHeight,
+        });
+    }, []);
 
     useEffect(() => {
         const element =

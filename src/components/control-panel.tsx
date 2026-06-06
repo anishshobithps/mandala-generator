@@ -1,7 +1,19 @@
-import { useState } from "react"
-import { formatHex, parse } from "culori"
-import { ShuffleIcon, LockIcon, LockOpenIcon, SlidersIcon, XIcon } from "@phosphor-icons/react"
+import { useState, useEffect } from "react"
+import { parse, formatCss } from "culori"
+import {
+  ShuffleIcon,
+  LockIcon,
+  LockOpenIcon,
+  SlidersIcon,
+  XIcon,
+  CaretDownIcon,
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@/components/ui/collapsible"
 import {
   Drawer,
   DrawerClose,
@@ -11,12 +23,16 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { cn } from "@/lib/utils"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import type { MandalaConfig } from "@/types/mandala"
 
 interface ControlPanelProps {
@@ -44,6 +60,18 @@ export function ControlPanel({
 }: ControlPanelProps) {
   const [locked, setLocked] =
     useState<Record<LockedKey, boolean>>(LOCKED_DEFAULTS)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.matchMedia("(max-width: 768px)").matches
+      if (!isMobile && drawerOpen) {
+        setDrawerOpen(false)
+      }
+    }
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [drawerOpen])
 
   const toggleLock = (key: LockedKey) =>
     setLocked((prev) => ({ ...prev, [key]: !prev[key] }))
@@ -60,7 +88,7 @@ export function ControlPanel({
   )
 
   return (
-    <>
+    <TooltipProvider>
       <aside className="hidden w-72 min-w-72 flex-col border-l border-border bg-card md:flex">
         <div className="flex shrink-0 items-baseline justify-between px-5 pt-6 pb-5">
           <div>
@@ -71,9 +99,27 @@ export function ControlPanel({
               Generator
             </p>
           </div>
-          <span className="text-[10px] text-muted-foreground/50 tabular-nums">
-            #{config.seed}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="text-[10px] text-muted-foreground/50 tabular-nums transition-colors hover:text-muted-foreground"
+                  aria-label="Learn about seed"
+                >
+                  #{config.seed}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-xs text-xs">
+                <div className="space-y-1">
+                  <p className="font-medium">Seed: {config.seed}</p>
+                  <p>
+                    This unique number determines your mandala's pattern. Save
+                    it to recreate the same design later.
+                  </p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
         <Separator />
         <ScrollArea className="flex-1">
@@ -91,16 +137,16 @@ export function ControlPanel({
           <ShuffleIcon size={18} />
         </Button>
 
-        <Drawer>
+        <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
           <DrawerTrigger asChild>
             <Button size="icon" aria-label="Open settings">
               <SlidersIcon size={18} />
             </Button>
           </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader className="flex items-center justify-between px-5 pt-4 pb-2">
+          <DrawerContent className="flex h-[calc(100dvh-2rem)] max-h-[calc(100dvh-2rem)] flex-col">
+            <DrawerHeader className="flex shrink-0 items-center justify-between border-b border-border px-5 pt-4 pb-3">
               <DrawerTitle className="font-heading text-sm tracking-[0.15em] uppercase">
-                Mandala Generator
+                Settings
               </DrawerTitle>
               <DrawerClose asChild>
                 <Button variant="ghost" size="icon-sm">
@@ -108,13 +154,26 @@ export function ControlPanel({
                 </Button>
               </DrawerClose>
             </DrawerHeader>
-            <ScrollArea className="max-h-[65dvh]">
-              <div className="px-5 pb-8">{panelContent}</div>
+            <ScrollArea className="flex-1">
+              <div className="px-4 py-4">{panelContent}</div>
             </ScrollArea>
+            <div className="shrink-0 border-t border-border bg-card px-4 py-3">
+              <Button
+                onClick={() => {
+                  onRandomize(locked)
+                  setDrawerOpen(false)
+                }}
+                className="w-full gap-2"
+                size="default"
+              >
+                <ShuffleIcon size={16} />
+                Randomize & Close
+              </Button>
+            </div>
           </DrawerContent>
         </Drawer>
       </div>
-    </>
+    </TooltipProvider>
   )
 }
 
@@ -135,9 +194,48 @@ function PanelContent({
   onRandomize,
   onToggleLock,
 }: PanelContentProps) {
+  const [showHelp, setShowHelp] = useState(false)
+
   return (
-    <div className="flex flex-col gap-6">
-      <section className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 md:gap-6">
+      {/* First-run help section */}
+      <Collapsible
+        open={showHelp}
+        onOpenChange={setShowHelp}
+        defaultOpen={false}
+      >
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 justify-start gap-2 px-0 text-xs font-normal"
+          >
+            <CaretDownIcon size={12} className="transition-transform" />
+            Getting Started
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="space-y-2 pt-2 pb-4 text-[13px] leading-relaxed text-foreground/80">
+          <p>
+            <strong>Rings</strong>: Number of concentric layers
+          </p>
+          <p>
+            <strong>Symmetry</strong>: Rotational sections (more = more
+            symmetric)
+          </p>
+          <p>
+            <strong>Complexity</strong>: Detail density
+          </p>
+          <p>
+            <strong>Scale</strong>: Size of the mandala
+          </p>
+          <p>
+            <strong>Lock</strong> values to keep them when randomizing
+          </p>
+        </CollapsibleContent>
+      </Collapsible>
+
+      <Separator />
+      <section className="flex flex-col gap-2 md:gap-4">
         <SliderField
           label="Rings"
           value={config.rings}
@@ -147,6 +245,7 @@ function PanelContent({
           locked={locked.rings}
           onLockToggle={() => onToggleLock("rings")}
           onValueChange={([v]) => onUpdateRings(v)}
+          description="Number of concentric layers"
         />
         <SliderField
           label="Symmetry"
@@ -157,6 +256,7 @@ function PanelContent({
           locked={locked.symmetry}
           onLockToggle={() => onToggleLock("symmetry")}
           onValueChange={([v]) => onUpdate({ symmetry: v })}
+          description="Rotational sections (more = more symmetric)"
         />
         <SliderField
           label="Complexity"
@@ -167,6 +267,7 @@ function PanelContent({
           locked={locked.complexity}
           onLockToggle={() => onToggleLock("complexity")}
           onValueChange={([v]) => onUpdate({ complexity: v })}
+          description="Detail density of patterns"
         />
         <SliderField
           label="Scale"
@@ -179,14 +280,17 @@ function PanelContent({
           onValueChange={([v]) => onUpdate({ scale: v })}
           format={(v) => v.toFixed(2)}
         />
-        <SliderField
-          label="Speed"
-          value={config.speed}
-          min={0}
-          max={10}
-          step={1}
-          onValueChange={([v]) => onUpdate({ speed: v })}
-        />
+        {config.animate && (
+          <SliderField
+            label="Speed"
+            value={config.speed}
+            min={0}
+            max={10}
+            step={1}
+            onValueChange={([v]) => onUpdate({ speed: v })}
+            title="Animation speed (only visible when Animate is enabled)"
+          />
+        )}
       </section>
 
       <Separator />
@@ -209,7 +313,9 @@ function PanelContent({
             )}
           </Button>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+
+        {/* Desktop: 2x2 grid */}
+        <div className="hidden grid-cols-2 gap-3 md:grid">
           {(
             [
               { key: "background", label: "Background" },
@@ -228,6 +334,74 @@ function PanelContent({
             />
           ))}
         </div>
+
+        {/* Mobile: Collapsible sections */}
+        <div className="flex flex-col gap-2 md:hidden">
+          <div className="space-y-2">
+            <ColorField
+              label="Background"
+              value={config.colors.background}
+              onChange={(v) =>
+                onUpdate({ colors: { ...config.colors, background: v } })
+              }
+              compact
+            />
+            <ColorField
+              label="Primary"
+              value={config.colors.primary}
+              onChange={(v) =>
+                onUpdate({ colors: { ...config.colors, primary: v } })
+              }
+              compact
+            />
+          </div>
+
+          <Collapsible defaultOpen={false}>
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 justify-start gap-2 px-0 text-xs font-normal"
+              >
+                <CaretDownIcon size={12} className="transition-transform" />
+                Secondary
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-2">
+              <ColorField
+                label="Secondary"
+                value={config.colors.secondary}
+                onChange={(v) =>
+                  onUpdate({ colors: { ...config.colors, secondary: v } })
+                }
+                compact
+              />
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible defaultOpen={false}>
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 justify-start gap-2 px-0 text-xs font-normal"
+              >
+                <CaretDownIcon size={12} className="transition-transform" />
+                Accent
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-2">
+              <ColorField
+                label="Accent"
+                value={config.colors.accent}
+                onChange={(v) =>
+                  onUpdate({ colors: { ...config.colors, accent: v } })
+                }
+                compact
+              />
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
       </section>
 
       <Separator />
@@ -237,6 +411,7 @@ function PanelContent({
           <Label
             htmlFor="toggle-fill"
             className="text-xs tracking-widest text-muted-foreground uppercase"
+            title="Fill shapes with colors"
           >
             Fill shapes
           </Label>
@@ -244,12 +419,14 @@ function PanelContent({
             id="toggle-fill"
             checked={config.fill}
             onCheckedChange={(v) => onUpdate({ fill: v })}
+            aria-label="Toggle fill shapes"
           />
         </div>
         <div className="flex items-center justify-between">
           <Label
             htmlFor="toggle-animate"
             className="text-xs tracking-widest text-muted-foreground uppercase"
+            title="Enable animation loop"
           >
             Animate
           </Label>
@@ -257,6 +434,7 @@ function PanelContent({
             id="toggle-animate"
             checked={config.animate}
             onCheckedChange={(v) => onUpdate({ animate: v })}
+            aria-label="Toggle animation"
           />
         </div>
       </section>
@@ -281,6 +459,8 @@ interface SliderFieldProps {
   onLockToggle?: () => void
   onValueChange: (v: number[]) => void
   format?: (v: number) => string
+  title?: string
+  description?: string
 }
 
 function SliderField({
@@ -293,15 +473,18 @@ function SliderField({
   onLockToggle,
   onValueChange,
   format,
+  title,
+  description,
 }: SliderFieldProps) {
   const id = `slider-${label.toLowerCase().replace(/\s+/g, "-")}`
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <Label
           htmlFor={id}
           className="text-xs tracking-widest text-muted-foreground uppercase"
+          title={title || description}
         >
           {label}
         </Label>
@@ -314,7 +497,17 @@ function SliderField({
               variant="ghost"
               size="icon-xs"
               onClick={onLockToggle}
-              aria-label={locked ? `Unlock ${label}` : `Lock ${label}`}
+              aria-label={
+                locked
+                  ? `Unlock ${label} (will randomize on next shuffle)`
+                  : `Lock ${label} (won't change when randomizing)`
+              }
+              title={
+                locked
+                  ? `Unlock ${label} (will randomize on next shuffle)`
+                  : `Lock ${label} (won't change when randomizing)`
+              }
+              className="text-muted-foreground hover:text-foreground"
             >
               {locked ? (
                 <LockIcon size={11} className="text-foreground" />
@@ -338,40 +531,243 @@ function SliderField({
   )
 }
 
+interface OklchColor {
+  l: number
+  c: number
+  h: number
+}
+
+function parseOklchColor(colorString: string): OklchColor {
+  const parsed = parse(colorString)
+  if (parsed && parsed.mode === "oklch") {
+    return {
+      l: parsed.l ?? 0.5,
+      c: parsed.c ?? 0.1,
+      h: parsed.h ?? 0,
+    }
+  }
+
+  // Fallback to default if parsing fails
+  return { l: 0.5, c: 0.1, h: 0 }
+}
+
+function oklchToString(color: OklchColor): string {
+  return formatCss({
+    mode: "oklch",
+    l: Math.max(0, Math.min(1, color.l)),
+    c: Math.max(0, Math.min(0.4, color.c)),
+    h: ((color.h % 360) + 360) % 360,
+  })
+}
+
 function ColorField({
   label,
   value,
   onChange,
+  compact = false,
 }: {
   label: string
   value: string
   onChange: (v: string) => void
+  compact?: boolean
 }) {
-  const id = `color-${label.toLowerCase()}`
-  const hex =
-    formatHex(parse(value) ?? { mode: "rgb", r: 0.5, g: 0.5, b: 0.5 }) ??
-    "#888888"
+  const baseId = `color-${label.toLowerCase()}`
+  const color = parseOklchColor(value)
+
+  const updateColor = (partial: Partial<OklchColor>) => {
+    const updated = { ...color, ...partial }
+    onChange(oklchToString(updated))
+  }
+
+  if (compact) {
+    return (
+      <div className="flex flex-col gap-2">
+        <Label
+          htmlFor={`${baseId}-swatch`}
+          className="text-[9px] tracking-wider text-muted-foreground uppercase"
+        >
+          {label}
+        </Label>
+
+        {/* Color swatch preview */}
+        <div
+          id={`${baseId}-swatch`}
+          className="h-6 w-full rounded-sm border border-border"
+          style={{ backgroundColor: value }}
+          role="img"
+          aria-label={`${label} color preview: ${value}`}
+        />
+
+        {/* Brightness slider */}
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor={`${baseId}-l`}
+              className="text-[8px] tracking-wider text-muted-foreground/70 uppercase"
+              title="Brightness: how light or dark the color is"
+            >
+              Brightness
+            </Label>
+            <span className="text-[8px] text-foreground/50 tabular-nums">
+              {(color.l * 100).toFixed(0)}%
+            </span>
+          </div>
+          <Slider
+            id={`${baseId}-l`}
+            value={[color.l]}
+            min={0}
+            max={1}
+            step={0.02}
+            onValueChange={([v]) => updateColor({ l: v })}
+            className="h-1"
+          />
+        </div>
+
+        {/* Saturation slider */}
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor={`${baseId}-c`}
+              className="text-[8px] tracking-wider text-muted-foreground/70 uppercase"
+              title="Saturation: how vivid or muted the color is"
+            >
+              Saturation
+            </Label>
+            <span className="text-[8px] text-foreground/50 tabular-nums">
+              {(color.c * 100).toFixed(0)}%
+            </span>
+          </div>
+          <Slider
+            id={`${baseId}-c`}
+            value={[color.c]}
+            min={0}
+            max={0.4}
+            step={0.01}
+            onValueChange={([v]) => updateColor({ c: v })}
+            className="h-1"
+          />
+        </div>
+
+        {/* Color slider */}
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor={`${baseId}-h`}
+              className="text-[8px] tracking-wider text-muted-foreground/70 uppercase"
+              title="Color: the shade from red around the color wheel"
+            >
+              Color
+            </Label>
+            <span className="text-[8px] text-foreground/50 tabular-nums">
+              {color.h.toFixed(0)}°
+            </span>
+          </div>
+          <Slider
+            id={`${baseId}-h`}
+            value={[color.h]}
+            min={0}
+            max={360}
+            step={1}
+            onValueChange={([v]) => updateColor({ h: v })}
+            className="h-1"
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-3">
       <Label
-        htmlFor={id}
+        htmlFor={`${baseId}-swatch`}
         className="text-[10px] tracking-wider text-muted-foreground uppercase"
       >
         {label}
       </Label>
-      <Input
-        id={id}
-        type="color"
-        value={hex}
-        onChange={(e) => onChange(e.target.value)}
-        className={cn(
-          "h-8 w-full cursor-pointer px-1 py-0.5",
-          "[&::-webkit-color-swatch-wrapper]:p-0",
-          "[&::-webkit-color-swatch]:rounded-sm",
-          "[&::-webkit-color-swatch]:border-none"
-        )}
+
+      {/* Color swatch preview */}
+      <div
+        id={`${baseId}-swatch`}
+        className="h-8 w-full rounded-sm border border-border"
+        style={{ backgroundColor: value }}
+        role="img"
+        aria-label={`${label} color preview: ${value}`}
       />
+
+      {/* Brightness slider */}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between">
+          <Label
+            htmlFor={`${baseId}-l`}
+            className="text-[9px] tracking-wider text-muted-foreground/80 uppercase"
+            title="Brightness: how light or dark the color is"
+          >
+            Brightness
+          </Label>
+          <span className="text-[9px] text-foreground/60 tabular-nums">
+            {(color.l * 100).toFixed(0)}%
+          </span>
+        </div>
+        <Slider
+          id={`${baseId}-l`}
+          value={[color.l]}
+          min={0}
+          max={1}
+          step={0.02}
+          onValueChange={([v]) => updateColor({ l: v })}
+          className="h-1"
+        />
+      </div>
+
+      {/* Saturation slider */}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between">
+          <Label
+            htmlFor={`${baseId}-c`}
+            className="text-[9px] tracking-wider text-muted-foreground/80 uppercase"
+            title="Saturation: how vivid or muted the color is"
+          >
+            Saturation
+          </Label>
+          <span className="text-[9px] text-foreground/60 tabular-nums">
+            {(color.c * 100).toFixed(0)}%
+          </span>
+        </div>
+        <Slider
+          id={`${baseId}-c`}
+          value={[color.c]}
+          min={0}
+          max={0.4}
+          step={0.01}
+          onValueChange={([v]) => updateColor({ c: v })}
+          className="h-1"
+        />
+      </div>
+
+      {/* Color slider */}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between">
+          <Label
+            htmlFor={`${baseId}-h`}
+            className="text-[9px] tracking-wider text-muted-foreground/80 uppercase"
+            title="Color: the shade from red around the color wheel"
+          >
+            Color
+          </Label>
+          <span className="text-[9px] text-foreground/60 tabular-nums">
+            {color.h.toFixed(0)}°
+          </span>
+        </div>
+        <Slider
+          id={`${baseId}-h`}
+          value={[color.h]}
+          min={0}
+          max={360}
+          step={1}
+          onValueChange={([v]) => updateColor({ h: v })}
+          className="h-1"
+        />
+      </div>
     </div>
   )
 }

@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 import { useAnimationFrame } from "@/hooks/use-animation-frame"
 import { useCanvasSize } from "@/hooks/use-canvas-size"
+import { MandalaCanvasSkeleton } from "@/components/mandala-canvas-skeleton"
 
 import { MandalaRenderer } from "@/lib/renderer/mandala-renderer"
 
@@ -13,10 +14,9 @@ interface MandalaCanvasProps {
 
 export function MandalaCanvas({ config }: MandalaCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-
   const canvasRef = useRef<HTMLCanvasElement>(null)
-
   const rendererRef = useRef<MandalaRenderer>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   const size = useCanvasSize(containerRef)
 
@@ -27,13 +27,19 @@ export function MandalaCanvas({ config }: MandalaCanvasProps) {
       return
     }
 
-    const ctx = canvas.getContext("2d")
+    try {
+      const ctx = canvas.getContext("2d")
 
-    if (!ctx) {
-      return
+      if (!ctx) {
+        return
+      }
+
+      rendererRef.current = new MandalaRenderer(canvas, ctx)
+      setIsLoading(false)
+    } catch (error) {
+      console.error("Failed to initialize canvas:", error)
+      setIsLoading(false)
     }
-
-    rendererRef.current = new MandalaRenderer(canvas, ctx)
   }, [])
 
   useEffect(() => {
@@ -64,8 +70,14 @@ export function MandalaCanvas({ config }: MandalaCanvasProps) {
   useAnimationFrame(frame)
 
   return (
-    <div ref={containerRef} className="h-full w-full">
-      <canvas ref={canvasRef} className="h-full w-full" />
+    <div ref={containerRef} className="relative h-full w-full">
+      {isLoading && <MandalaCanvasSkeleton />}
+      <canvas
+        ref={canvasRef}
+        className="h-full w-full"
+        role="img"
+        aria-label="Generated mandala pattern with customizable rings, symmetry, and colors. Use the control panel to adjust parameters."
+      />
     </div>
   )
 }

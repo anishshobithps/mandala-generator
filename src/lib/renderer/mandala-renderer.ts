@@ -114,11 +114,6 @@ export class MandalaRenderer {
             this.state.rotation,
         );
 
-        this.ctx.translate(
-            -centerX,
-            -centerY,
-        );
-
         for (
             let ringIndex = 0;
             ringIndex <
@@ -163,8 +158,8 @@ export class MandalaRenderer {
             renderer({
                 ctx: this.ctx,
 
-                centerX,
-                centerY,
+                centerX: 0,
+                centerY: 0,
 
                 outerRadius,
                 innerRadius,
@@ -187,8 +182,8 @@ export class MandalaRenderer {
         this.ctx.beginPath();
 
         this.ctx.arc(
-            centerX,
-            centerY,
+            0,
+            0,
             maxRadius * 0.04,
             0,
             Math.PI * 2,

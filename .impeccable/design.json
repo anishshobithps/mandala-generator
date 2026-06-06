@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-06T00:00:00Z",
+  "title": "Design System: The Mandala Studio",
+  "extensions": {
+    "colorMeta": {
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(0.15 0 0)",
+          "oklch(0.3 0 0)",
+          "oklch(0.45 0 0)",
+          "oklch(0.6 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.85 0 0)",
+          "oklch(0.92 0 0)",
+          "oklch(1 0 0)"
+        ]
+      },
+      "near-black": {
+        "role": "primary",
+        "displayName": "Near Black",
+        "canonical": "oklch(0.145 0 0)",
+        "tonalRamp": [
+          "oklch(0.1 0 0)",
+          "oklch(0.145 0 0)",
+          "oklch(0.2 0 0)",
+          "oklch(0.3 0 0)",
+          "oklch(0.45 0 0)",
+          "oklch(0.6 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.9 0 0)"
+        ]
+      },
+      "light-gray": {
+        "role": "neutral",
+        "displayName": "Light Gray",
+        "canonical": "oklch(0.922 0 0)",
+        "tonalRamp": [
+          "oklch(0.3 0 0)",
+          "oklch(0.45 0 0)",
+          "oklch(0.6 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.85 0 0)",
+          "oklch(0.92 0 0)",
+          "oklch(0.97 0 0)",
+          "oklch(1 0 0)"
+        ]
+      },
+      "warm-accent": {
+        "role": "accent",
+        "displayName": "Warm Reddish Accent",
+        "canonical": "oklch(0.577 0.245 27.325)",
+        "tonalRamp": [
+          "oklch(0.3 0.2 25)",
+          "oklch(0.4 0.23 26)",
+          "oklch(0.5 0.24 26.5)",
+          "oklch(0.577 0.245 27.325)",
+          "oklch(0.65 0.24 28)",
+          "oklch(0.7 0.22 29)",
+          "oklch(0.8 0.15 30)",
+          "oklch(0.9 0.08 32)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headlines, main title. Used rarely (≤1 per screen)."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings, tool names."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Primary content, instructions, descriptions. Max 65–75ch line length."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form labels, button text, metadata."
+      }
+    },
+    "shadows": [
+      {
+        "name": "none",
+        "value": "none",
+        "purpose": "Flat-by-default. No persistent shadows."
+      },
+      {
+        "name": "focus-ring-light",
+        "value": "0 0 0 3px rgba(112, 128, 144, 0.3)",
+        "purpose": "Focus indicator in light mode. Keyboard navigation highlight."
+      },
+      {
+        "name": "focus-ring-dark",
+        "value": "0 0 0 3px rgba(112, 128, 144, 1)",
+        "purpose": "Focus indicator in dark mode. Higher contrast for accessibility."
+      }
+    ],
+    "motion": [
+      {
+        "name": "standard-ease",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for state transitions (200ms). Smooth, not bouncy."
+      },
+      {
+        "name": "reduced-motion-fallback",
+        "value": "none",
+        "purpose": "When prefers-reduced-motion is enabled, use instant transitions."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px",
+        "purpose": "Mobile-first breakpoint."
+      },
+      {
+        "name": "md",
+        "value": "768px",
+        "purpose": "Tablet / small desktop. Control panel switches from drawer to sidebar."
+      },
+      {
+        "name": "lg",
+        "value": "1024px",
+        "purpose": "Desktop. Full layout with side-by-side canvas and controls."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action button. Dark background, light text, very rounded pill style.",
+      "html": "<button class=\"ds-btn-primary\">Generate</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; background-color: #1c1e1e; color: #fcf9f6; padding: 12px 24px; border-radius: 26px; border: none; font-family: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 1rem; font-weight: 500; font-variation-settings: 'wght' 500; cursor: pointer; transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { background-color: #353739; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(112, 128, 144, 0.3); } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; } @media (prefers-reduced-motion: reduce) { .ds-btn-primary { transition: none; } .ds-btn-primary:active { transform: none; } }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action. Light background, dark text, pill-shaped.",
+      "html": "<button class=\"ds-btn-outline\">Randomize</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; background-color: #f8f8f7; color: #1c1e1e; padding: 12px 24px; border-radius: 26px; border: 1px solid #eae8e6; font-family: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-outline:hover { background-color: #eae8e6; } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(112, 128, 144, 0.3); } .ds-btn-outline:disabled { opacity: 0.5; cursor: not-allowed; } @media (prefers-reduced-motion: reduce) { .ds-btn-outline { transition: none; } }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Form input with soft rounding and light gray background.",
+      "html": "<input type=\"text\" class=\"ds-input\" placeholder=\"Enter value...\" />",
+      "css": ".ds-input { display: block; width: 100%; height: 36px; padding: 8px 12px; border-radius: 22px; background-color: rgba(234, 232, 230, 0.5); color: #1c1e1e; border: none; font-family: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 1rem; font-weight: 400; transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-input::placeholder { color: #8d8d8d; } .ds-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(112, 128, 144, 0.3); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; } @media (prefers-reduced-motion: reduce) { .ds-input { transition: none; } }"
+    },
+    {
+      "name": "Slider",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Range input for numeric control. Light track, dark thumb, smooth feedback.",
+      "html": "<input type=\"range\" class=\"ds-slider\" min=\"0\" max=\"100\" value=\"50\" />",
+      "css": ".ds-slider { width: 100%; height: 4px; border-radius: 2px; background: linear-gradient(to right, #1c1e1e 0%, #1c1e1e 50%, #eae8e6 50%, #eae8e6 100%); outline: none; -webkit-appearance: none; appearance: none; } .ds-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background-color: #1c1e1e; cursor: pointer; transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-slider::-webkit-slider-thumb:hover { transform: scale(1.1); } .ds-slider::-webkit-slider-thumb:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(112, 128, 144, 0.3); } .ds-slider::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background-color: #1c1e1e; border: none; cursor: pointer; transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-slider::-moz-range-thumb:hover { transform: scale(1.1); } .ds-slider::-moz-range-track { background: transparent; border: none; } @media (prefers-reduced-motion: reduce) { .ds-slider::-webkit-slider-thumb, .ds-slider::-moz-range-thumb { transition: none; } }"
+    },
+    {
+      "name": "Card Container",
+      "kind": "card",
+      "refersTo": null,
+      "description": "Content container with soft rounded corners and light background.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Pattern Options</h3><p class=\"ds-card-content\">Choose from various symmetric patterns.</p></div>",
+      "css": ".ds-card { background-color: #f8f8f7; border: 1px solid #eae8e6; border-radius: 10px; padding: 24px; font-family: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; } .ds-card-title { margin: 0 0 12px 0; font-size: 1.125rem; font-weight: 500; color: #1c1e1e; } .ds-card-content { margin: 0; font-size: 1rem; font-weight: 400; color: #1c1e1e; line-height: 1.5; }"
+    },
+    {
+      "name": "Label + Control Group",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Form group with label and input. Demonstrates spacing and typography.",
+      "html": "<label class=\"ds-control-group\"><span class=\"ds-label\">Ring Count</span><input type=\"number\" class=\"ds-input-sm\" min=\"1\" max=\"12\" value=\"6\" /></label>",
+      "css": ".ds-control-group { display: flex; flex-direction: column; gap: 8px; font-family: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; } .ds-label { font-size: 0.875rem; font-weight: 500; color: #1c1e1e; } .ds-input-sm { height: 32px; padding: 6px 12px; border-radius: 22px; background-color: rgba(234, 232, 230, 0.5); border: none; font-size: 0.875rem; color: #1c1e1e; } .ds-input-sm:focus { outline: none; box-shadow: 0 0 0 3px rgba(112, 128, 144, 0.3); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Mandala Studio",
+    "overview": "This system supports a creative tool for exploring generative mandala art. The design is warm, approachable, and intentionally playful—inviting casual creators to experiment without technical intimidation. The mandala canvas is the hero; the UI scaffolds the creation without competing for attention. The palette is restrained (mostly neutrals), and interactions feel smooth and responsive.",
+    "keyCharacteristics": [
+      "Soft, generous border radius (friendly and approachable)",
+      "Grayscale + single accent (warm reddish tone); accent used sparingly for key actions",
+      "Smooth transitions and gentle feedback on interaction",
+      "Content-forward layout (canvas maximized on desktop, adaptive on mobile)",
+      "Accessibility built-in (color-blind safe, keyboard nav, reduced motion support)"
+    ],
+    "rules": [
+      {
+        "name": "The Warmth Rule",
+        "body": "Gray tints favor neutrality with a hair toward warm (slightly reduced blue channel), never toward clinical blue. The single saturated accent (warm reddish tone) is reserved for states that demand attention; its rarity is the point.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single-Family Rule",
+        "body": "Inter Variable in multiple weights replaces font mixing. This eliminates the 'indecision' feel of three competing typefaces and ensures consistency at any scale.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "No persistent shadows. Surfaces are flat; focus and state change are conveyed through color shift and focus ring only.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use the warm reddish accent for errors, destructive actions, and warnings only",
+      "Do pair text labels with icons on all interactive elements",
+      "Do respect prefers-reduced-motion by removing transitions; instant transitions are fine",
+      "Do test all text at 18px small-text size for ≥4.5:1 contrast",
+      "Do keep buttons, inputs, and cards very rounded (pill-style, rounded-3xl or rounded-4xl)",
+      "Do maximize canvas space on desktop; adapt control panel to mobile"
+    ],
+    "donts": [
+      "Don't use the SaaS corporate look (sharp corners, clinical symmetry)",
+      "Don't clutter the interface with too many visible controls at once",
+      "Don't use the minimalist coldness aesthetic (sterile white, hard shadows)",
+      "Don't pair colors that are both desaturated and on the cool end",
+      "Don't use red/green color pairs without additional visual markers",
+      "Don't animate layout properties without careful performance testing",
+      "Don't use side-stripe borders as accent",
+      "Don't gate content visibility on a transition"
+    ]
+  }
+}

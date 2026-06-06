@@ -1,9 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function useAnimationFrame(
     callback: (deltaTime: number) => void,
     enabled = true,
 ) {
+    const callbackRef = useRef(callback);
+
+    useEffect(() => {
+        callbackRef.current = callback;
+    }, [callback]);
+
     useEffect(() => {
         if (!enabled) {
             return;
@@ -17,7 +23,7 @@ export function useAnimationFrame(
 
             previousTime = time;
 
-            callback(deltaTime);
+            callbackRef.current(deltaTime);
 
             frameId = requestAnimationFrame(loop);
         };
@@ -27,5 +33,5 @@ export function useAnimationFrame(
         return () => {
             cancelAnimationFrame(frameId);
         };
-    }, [callback, enabled]);
+    }, [enabled]);
 }
