@@ -335,72 +335,50 @@ function PanelContent({
           ))}
         </div>
 
-        {/* Mobile: Collapsible sections */}
-        <div className="flex flex-col gap-2 md:hidden">
-          <div className="space-y-2">
-            <ColorField
-              label="Background"
-              value={config.colors.background}
-              onChange={(v) =>
-                onUpdate({ colors: { ...config.colors, background: v } })
-              }
-              compact
-            />
-            <ColorField
-              label="Primary"
-              value={config.colors.primary}
-              onChange={(v) =>
-                onUpdate({ colors: { ...config.colors, primary: v } })
-              }
-              compact
-            />
-          </div>
-
-          <Collapsible defaultOpen={false}>
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 justify-start gap-2 px-0 text-xs font-normal"
-              >
-                <CaretDownIcon size={12} className="transition-transform" />
-                Secondary
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="pt-2">
-              <ColorField
-                label="Secondary"
-                value={config.colors.secondary}
-                onChange={(v) =>
-                  onUpdate({ colors: { ...config.colors, secondary: v } })
-                }
-                compact
-              />
-            </CollapsibleContent>
-          </Collapsible>
-
-          <Collapsible defaultOpen={false}>
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 justify-start gap-2 px-0 text-xs font-normal"
-              >
-                <CaretDownIcon size={12} className="transition-transform" />
-                Accent
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="pt-2">
-              <ColorField
-                label="Accent"
-                value={config.colors.accent}
-                onChange={(v) =>
-                  onUpdate({ colors: { ...config.colors, accent: v } })
-                }
-                compact
-              />
-            </CollapsibleContent>
-          </Collapsible>
+        {/* Mobile: Full-width stacked colors */}
+        <div className="flex flex-col gap-4 md:hidden">
+          {(
+            [
+              { key: "background", label: "Background" },
+              { key: "primary", label: "Primary" },
+              { key: "secondary", label: "Secondary" },
+              { key: "accent", label: "Accent" },
+            ] as const
+          ).map(({ key, label }) => (
+            <Collapsible key={key} defaultOpen={key === "background"}>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-between gap-2 px-0 py-2 text-sm font-medium hover:bg-transparent"
+                >
+                  <span className="flex items-center gap-2">
+                    <div
+                      className="h-5 w-5 rounded border-2 border-border"
+                      style={{
+                        backgroundColor: config.colors[key],
+                      }}
+                    />
+                    {label}
+                  </span>
+                  <CaretDownIcon
+                    size={14}
+                    className="transition-transform data-[state=open]:rotate-180"
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-3 pb-1">
+                <ColorField
+                  label={label}
+                  value={config.colors[key]}
+                  onChange={(v) =>
+                    onUpdate({ colors: { ...config.colors, [key]: v } })
+                  }
+                  mobile
+                />
+              </CollapsibleContent>
+            </Collapsible>
+          ))}
         </div>
       </section>
 
@@ -565,11 +543,13 @@ function ColorField({
   value,
   onChange,
   compact = false,
+  mobile = false,
 }: {
   label: string
   value: string
   onChange: (v: string) => void
   compact?: boolean
+  mobile?: boolean
 }) {
   const baseId = `color-${label.toLowerCase()}`
   const color = parseOklchColor(value)
@@ -577,6 +557,93 @@ function ColorField({
   const updateColor = (partial: Partial<OklchColor>) => {
     const updated = { ...color, ...partial }
     onChange(oklchToString(updated))
+  }
+
+  if (mobile) {
+    return (
+      <div className="flex flex-col gap-3 pl-1">
+        {/* Color swatch preview - larger for touch */}
+        <div
+          id={`${baseId}-swatch`}
+          className="h-12 w-full rounded-md border-2 border-border"
+          style={{ backgroundColor: value }}
+          role="img"
+          aria-label={`${label} color preview: ${value}`}
+        />
+
+        {/* Brightness slider */}
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor={`${baseId}-l`}
+              className="text-xs font-medium text-foreground"
+              title="Brightness: how light or dark the color is"
+            >
+              Brightness
+            </Label>
+            <span className="text-xs text-foreground/70 tabular-nums">
+              {(color.l * 100).toFixed(0)}%
+            </span>
+          </div>
+          <Slider
+            id={`${baseId}-l`}
+            value={[color.l]}
+            min={0}
+            max={1}
+            step={0.02}
+            onValueChange={([v]) => updateColor({ l: v })}
+          />
+        </div>
+
+        {/* Saturation slider */}
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor={`${baseId}-c`}
+              className="text-xs font-medium text-foreground"
+              title="Saturation: how vivid or muted the color is"
+            >
+              Saturation
+            </Label>
+            <span className="text-xs text-foreground/70 tabular-nums">
+              {(color.c * 100).toFixed(0)}%
+            </span>
+          </div>
+          <Slider
+            id={`${baseId}-c`}
+            value={[color.c]}
+            min={0}
+            max={0.4}
+            step={0.01}
+            onValueChange={([v]) => updateColor({ c: v })}
+          />
+        </div>
+
+        {/* Color slider */}
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor={`${baseId}-h`}
+              className="text-xs font-medium text-foreground"
+              title="Color: the shade from red around the color wheel"
+            >
+              Color
+            </Label>
+            <span className="text-xs text-foreground/70 tabular-nums">
+              {color.h.toFixed(0)}°
+            </span>
+          </div>
+          <Slider
+            id={`${baseId}-h`}
+            value={[color.h]}
+            min={0}
+            max={360}
+            step={1}
+            onValueChange={([v]) => updateColor({ h: v })}
+          />
+        </div>
+      </div>
+    )
   }
 
   if (compact) {
