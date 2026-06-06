@@ -5,7 +5,6 @@ import {
   LockIcon,
   LockOpenIcon,
   SlidersIcon,
-  XIcon,
   CaretDownIcon,
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
@@ -16,7 +15,6 @@ import {
 } from "@/components/ui/collapsible"
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
@@ -144,15 +142,10 @@ export function ControlPanel({
             </Button>
           </DrawerTrigger>
           <DrawerContent className="flex h-[calc(100dvh-2rem)] max-h-[calc(100dvh-2rem)] flex-col">
-            <DrawerHeader className="flex shrink-0 items-center justify-between border-b border-border px-5 pt-4 pb-3">
+            <DrawerHeader className="shrink-0 border-b border-border px-5 pt-4 pb-3">
               <DrawerTitle className="font-heading text-sm tracking-[0.15em] uppercase">
                 Settings
               </DrawerTitle>
-              <DrawerClose asChild>
-                <Button variant="ghost" size="icon-sm">
-                  <XIcon size={14} />
-                </Button>
-              </DrawerClose>
             </DrawerHeader>
             <ScrollArea className="flex-1">
               <div className="px-4 py-4">{panelContent}</div>
@@ -195,6 +188,7 @@ function PanelContent({
   onToggleLock,
 }: PanelContentProps) {
   const [showHelp, setShowHelp] = useState(false)
+  const [activeColorTab, setActiveColorTab] = useState<"background" | "primary" | "secondary" | "accent">("background")
 
   return (
     <div className="flex flex-col gap-4 md:gap-6">
@@ -335,50 +329,46 @@ function PanelContent({
           ))}
         </div>
 
-        {/* Mobile: Full-width stacked colors */}
-        <div className="flex flex-col gap-4 md:hidden">
-          {(
-            [
-              { key: "background", label: "Background" },
-              { key: "primary", label: "Primary" },
-              { key: "secondary", label: "Secondary" },
-              { key: "accent", label: "Accent" },
-            ] as const
-          ).map(({ key, label }) => (
-            <Collapsible key={key} defaultOpen={key === "background"}>
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="group w-full justify-between gap-2 px-2 py-2 text-sm font-medium transition-colors hover:bg-muted/40"
-                >
-                  <span className="flex items-center gap-2.5 transition-colors group-hover:text-foreground">
-                    <div
-                      className="h-5 w-5 rounded border-2 border-border transition-all group-hover:border-foreground/50"
-                      style={{
-                        backgroundColor: config.colors[key],
-                      }}
-                    />
-                    {label}
-                  </span>
-                  <CaretDownIcon
-                    size={14}
-                    className="transition-transform duration-200 group-hover:text-foreground/70 data-[state=open]:rotate-180"
-                  />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="pt-3 pb-1">
-                <ColorField
-                  label={label}
-                  value={config.colors[key]}
-                  onChange={(v) =>
-                    onUpdate({ colors: { ...config.colors, [key]: v } })
-                  }
-                  mobile
+        {/* Mobile: Color tab switcher */}
+        <div className="flex flex-col gap-3 md:hidden">
+          <div className="flex gap-1.5">
+            {(
+              [
+                { key: "background", label: "BG" },
+                { key: "primary", label: "Primary" },
+                { key: "secondary", label: "Sec" },
+                { key: "accent", label: "Accent" },
+              ] as const
+            ).map(({ key, label }) => (
+              <Button
+                key={key}
+                variant={activeColorTab === key ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveColorTab(key)}
+                className="flex-1 gap-2 text-xs"
+              >
+                <div
+                  className="h-3 w-3 rounded-full border border-current"
+                  style={{
+                    backgroundColor: config.colors[key],
+                  }}
                 />
-              </CollapsibleContent>
-            </Collapsible>
-          ))}
+                {label}
+              </Button>
+            ))}
+          </div>
+          {activeColorTab && (
+            <ColorField
+              label={
+                activeColorTab.charAt(0).toUpperCase() + activeColorTab.slice(1)
+              }
+              value={config.colors[activeColorTab]}
+              onChange={(v) =>
+                onUpdate({ colors: { ...config.colors, [activeColorTab]: v } })
+              }
+              mobile
+            />
+          )}
         </div>
       </section>
 
