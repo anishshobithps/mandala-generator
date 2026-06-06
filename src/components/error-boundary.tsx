@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from "react"
-import { WarningOctagon } from "@phosphor-icons/react"
+import { WarningOctagonIcon } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 
 interface Props {
@@ -37,7 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="flex h-full w-full items-center justify-center bg-background p-4">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="rounded-lg bg-destructive/10 p-3">
-              <WarningOctagon
+              <WarningOctagonIcon
                 size={32}
                 className="text-destructive"
                 weight="fill"

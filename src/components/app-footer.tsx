@@ -4,7 +4,7 @@ export function AppFooter() {
   return (
     <footer className="fixed right-0 bottom-0 left-0 border-t border-border bg-card/50 p-3 text-center text-xs text-muted-foreground backdrop-blur-sm md:py-2">
       <p>
-        <span>© {currentYear} Mandala Generator</span>
+        <span>© {currentYear} The Mandala Studio</span>
         <span className="mx-2 opacity-30">·</span>
         <a
           href="https://n10nce.dev"
