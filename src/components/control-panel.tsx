@@ -188,7 +188,9 @@ function PanelContent({
   onToggleLock,
 }: PanelContentProps) {
   const [showHelp, setShowHelp] = useState(false)
-  const [activeColorTab, setActiveColorTab] = useState<"background" | "primary" | "secondary" | "accent">("background")
+  const [activeColorTab, setActiveColorTab] = useState<
+    "background" | "primary" | "secondary" | "accent"
+  >("background")
 
   return (
     <div className="flex flex-col gap-4 md:gap-6">
@@ -202,9 +204,12 @@ function PanelContent({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 justify-start gap-2 px-0 text-xs font-normal"
+            className="group h-auto justify-start gap-2 px-2 py-1.5 text-xs font-normal transition-colors hover:bg-muted/40 hover:text-foreground"
           >
-            <CaretDownIcon size={12} className="transition-transform" />
+            <CaretDownIcon
+              size={12}
+              className="shrink-0 transition-transform duration-200 group-hover:text-foreground/70"
+            />
             Getting Started
           </Button>
         </CollapsibleTrigger>
