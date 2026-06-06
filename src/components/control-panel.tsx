@@ -81,7 +81,7 @@ export function ControlPanel({
 
   return (
     <TooltipProvider>
-      <aside className="hidden w-72 min-w-72 flex-col border-l border-border bg-card md:flex">
+      <aside className="hidden w-72 min-w-72 flex-col overflow-hidden border-l border-border bg-card md:flex">
         <div className="flex shrink-0 items-baseline justify-between px-5 pt-6 pb-5">
           <div>
             <h1 className="font-heading text-base font-medium tracking-[0.15em] uppercase">
@@ -111,7 +111,7 @@ export function ControlPanel({
           </div>
         </div>
         <Separator />
-        <ScrollArea className="flex-1">
+        <ScrollArea className="min-h-0 flex-1">
           <div className="px-5 py-5">{panelContent}</div>
         </ScrollArea>
       </aside>
