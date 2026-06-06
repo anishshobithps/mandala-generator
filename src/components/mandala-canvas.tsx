@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react"
 
 import { useAnimationFrame } from "@/hooks/use-animation-frame"
 import { useCanvasSize } from "@/hooks/use-canvas-size"

@@ -125,20 +125,25 @@ export function ControlPanel({
         </ScrollArea>
       </aside>
 
-      <div className="fixed right-5 bottom-5 z-50 flex flex-col gap-3 md:hidden">
+      <div className="fixed right-6 bottom-20 z-50 flex flex-col gap-3 md:hidden">
         <Button
-          size="icon"
+          size="icon-lg"
           variant="secondary"
           onClick={() => onRandomize(locked)}
-          aria-label="Randomize"
+          aria-label="Randomize mandala pattern"
+          className="shadow-lg transition-all hover:shadow-xl"
         >
-          <ShuffleIcon size={18} />
+          <ShuffleIcon size={24} />
         </Button>
 
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
           <DrawerTrigger asChild>
-            <Button size="icon" aria-label="Open settings">
-              <SlidersIcon size={18} />
+            <Button
+              size="icon-lg"
+              aria-label="Open settings drawer"
+              className="shadow-lg transition-all hover:shadow-xl"
+            >
+              <SlidersIcon size={24} />
             </Button>
           </DrawerTrigger>
           <DrawerContent className="flex h-[calc(100dvh-2rem)] max-h-[calc(100dvh-2rem)] flex-col">
