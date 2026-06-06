@@ -85,11 +85,8 @@ export function ControlPanel({
         <div className="flex shrink-0 items-baseline justify-between px-5 pt-6 pb-5">
           <div>
             <h1 className="font-heading text-base font-medium tracking-[0.15em] uppercase">
-              Mandala
+              The Mandala Studio
             </h1>
-            <p className="mt-0.5 text-[11px] tracking-[0.12em] text-muted-foreground">
-              Generator
-            </p>
           </div>
           <div className="flex items-center gap-1.5">
             <Tooltip>
