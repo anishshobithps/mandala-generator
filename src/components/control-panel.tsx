@@ -143,7 +143,7 @@ export function ControlPanel({
                 Settings
               </DrawerTitle>
             </DrawerHeader>
-            <ScrollArea className="flex-1">
+            <ScrollArea className="min-h-0 flex-1">
               <div className="px-4 py-4">{panelContent}</div>
             </ScrollArea>
             <div className="shrink-0 border-t border-border bg-card px-4 py-3">
