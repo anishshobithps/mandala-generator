@@ -27,7 +27,6 @@ export class ErrorBoundary extends Component<Props, State> {
 
   handleReset = () => {
     this.setState({ hasError: false, error: null })
-    // Reload page to reset canvas state
     window.location.reload()
   }
 

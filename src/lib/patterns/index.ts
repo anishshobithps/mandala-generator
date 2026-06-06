@@ -1,94 +1,27 @@
-import type {
-    PatternType,
-} from "@/types/mandala";
+import type { PatternType } from "@/types/mandala";
 
-import {
-    renderArcs,
-} from "./arcs";
+import { renderArcsSvg } from "./arcs.svg";
+import { renderPetalsSvg } from "./petals.svg";
+import { renderTrianglesSvg } from "./triangles.svg";
+import { renderDiamondsSvg } from "./diamonds.svg";
+import { renderPolygonsSvg } from "./polygons.svg";
+import { renderWavesSvg } from "./waves.svg";
+import { renderCrossesSvg } from "./crosses.svg";
+import { renderTeardropSvg } from "./teardrop.svg";
+import { renderChevronSvg } from "./chevron.svg";
+import { renderLotusSvg } from "./lotus.svg";
 
-import {
-    renderPetals,
-} from "./petals";
+import type { SvgPatternRenderer } from "./types";
 
-import {
-    renderTriangles,
-} from "./triangles";
-
-import {
-    renderDiamonds,
-} from "./diamonds";
-
-import {
-    renderPolygons,
-} from "./polygons";
-
-import {
-    renderWaves,
-} from "./waves";
-
-import {
-    renderCrosses,
-} from "./crosses";
-
-import {
-    renderTeardrop,
-} from "./teardrop";
-
-import {
-    renderChevron,
-} from "./chevron";
-
-import {
-    renderLotus,
-} from "./lotus";
-
-import type {
-    PatternRenderer,
-} from "./types";
-
-export const patternRegistry =
-    new Map<
-        PatternType,
-        PatternRenderer
-    >([
-        [
-            "petals",
-            renderPetals,
-        ],
-        [
-            "arcs",
-            renderArcs,
-        ],
-        [
-            "triangles",
-            renderTriangles,
-        ],
-        [
-            "diamonds",
-            renderDiamonds,
-        ],
-        [
-            "polygons",
-            renderPolygons,
-        ],
-        [
-            "waves",
-            renderWaves,
-        ],
-        [
-            "crosses",
-            renderCrosses,
-        ],
-        [
-            "teardrop",
-            renderTeardrop,
-        ],
-        [
-            "chevron",
-            renderChevron,
-        ],
-        [
-            "lotus",
-            renderLotus,
-        ],
-    ]);
+export const patternSvgRegistry = new Map<PatternType, SvgPatternRenderer>([
+    ["petals", renderPetalsSvg],
+    ["arcs", renderArcsSvg],
+    ["triangles", renderTrianglesSvg],
+    ["diamonds", renderDiamondsSvg],
+    ["polygons", renderPolygonsSvg],
+    ["waves", renderWavesSvg],
+    ["crosses", renderCrossesSvg],
+    ["teardrop", renderTeardropSvg],
+    ["chevron", renderChevronSvg],
+    ["lotus", renderLotusSvg],
+]);

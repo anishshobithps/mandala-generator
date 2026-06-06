@@ -1,95 +1,43 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react"
-
-import { useAnimationFrame } from "@/hooks/use-animation-frame"
-import { useCanvasSize } from "@/hooks/use-canvas-size"
-import { MandalaCanvasSkeleton } from "@/components/mandala-canvas-skeleton"
-
-import { MandalaRenderer } from "@/lib/renderer/mandala-renderer"
-
+import { useRef, useEffect } from "react"
+import { SVG } from "@svgdotjs/svg.js"
+import { drawMandalaToSvg } from "@/lib/renderer/mandala-svg-renderer"
 import type { MandalaConfig } from "@/types/mandala"
 
 interface MandalaCanvasProps {
   config: MandalaConfig
 }
 
+const LIVE_SIZE = 1024
+
 export function MandalaCanvas({ config }: MandalaCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const rendererRef = useRef<MandalaRenderer>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [, startTransition] = useTransition()
-
-  const size = useCanvasSize(containerRef)
-
-  useLayoutEffect(() => {
-    const canvas = canvasRef.current
-
-    if (!canvas) {
-      return
-    }
-
-    try {
-      const ctx = canvas.getContext("2d")
-
-      if (!ctx) {
-        return
-      }
-
-      rendererRef.current = new MandalaRenderer(canvas, ctx)
-      startTransition(() => {
-        setIsLoading(false)
-      })
-    } catch (error) {
-      console.error("Failed to initialize canvas:", error)
-      startTransition(() => {
-        setIsLoading(false)
-      })
-    }
-  }, [])
 
   useEffect(() => {
-    const renderer = rendererRef.current
+    const container = containerRef.current
+    if (!container) return
 
-    if (!renderer) {
-      return
+    container.innerHTML = ""
+
+    const draw = SVG().addTo(container).size("100%", "100%")
+    draw.attr({ xmlns: "http://www.w3.org/2000/svg" })
+
+    drawMandalaToSvg(draw, config, {
+      withAnimation: config.animate,
+      withBackground: true,
+      size: LIVE_SIZE,
+    })
+
+    return () => {
+      container.innerHTML = ""
     }
-
-    renderer.resize(size.width, size.height)
-  }, [size])
-
-  const frame = useCallback(
-    (deltaTime: number) => {
-      const renderer = rendererRef.current
-
-      if (!renderer) {
-        return
-      }
-
-      renderer.update(deltaTime, config)
-
-      renderer.draw(config)
-    },
-    [config]
-  )
-
-  useAnimationFrame(frame)
+  }, [config])
 
   return (
-    <div ref={containerRef} className="relative h-full w-full">
-      {isLoading && <MandalaCanvasSkeleton />}
-      <canvas
-        ref={canvasRef}
-        className="h-full w-full"
-        role="img"
-        aria-label="Generated mandala pattern with customizable rings, symmetry, and colors. Use the control panel to adjust parameters."
-      />
-    </div>
+    <div
+      ref={containerRef}
+      className="relative h-full w-full"
+      role="img"
+      aria-label="Generated mandala"
+    />
   )
 }

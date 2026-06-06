@@ -5,7 +5,12 @@ import {
   LockIcon,
   LockOpenIcon,
   SlidersIcon,
+  DownloadSimpleIcon,
 } from "@phosphor-icons/react"
+import {
+  buildMandalaSvg,
+  downloadSvg,
+} from "@/lib/renderer/mandala-svg-renderer"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -176,7 +181,6 @@ function PanelContent({
 
   return (
     <div className="flex flex-col gap-4 md:gap-6">
-      {/* First-run help section */}
       <section className="flex flex-col gap-2 md:gap-4">
         <SliderField
           label="Rings"
@@ -187,7 +191,7 @@ function PanelContent({
           locked={locked.rings}
           onLockToggle={() => onToggleLock("rings")}
           onValueChange={([v]) => onUpdateRings(v)}
-          description="Number of concentric layers"
+          title="Number of concentric layers"
         />
         <SliderField
           label="Symmetry"
@@ -198,7 +202,7 @@ function PanelContent({
           locked={locked.symmetry}
           onLockToggle={() => onToggleLock("symmetry")}
           onValueChange={([v]) => onUpdate({ symmetry: v })}
-          description="Rotational sections (more = more symmetric)"
+          title="Rotational sections (more = more symmetric)"
         />
         <SliderField
           label="Complexity"
@@ -209,7 +213,7 @@ function PanelContent({
           locked={locked.complexity}
           onLockToggle={() => onToggleLock("complexity")}
           onValueChange={([v]) => onUpdate({ complexity: v })}
-          description="Detail density of patterns"
+          title="Detail density of patterns"
         />
         <SliderField
           label="Scale"
@@ -255,7 +259,6 @@ function PanelContent({
           </Button>
         </div>
 
-        {/* Desktop: 2x2 grid */}
         <div className="hidden grid-cols-2 gap-3 md:grid">
           {(
             [
@@ -276,7 +279,6 @@ function PanelContent({
           ))}
         </div>
 
-        {/* Mobile: Color tab switcher */}
         <div className="flex flex-col gap-3 md:hidden">
           <div className="flex gap-1.5">
             {(
@@ -360,6 +362,117 @@ function PanelContent({
         <ShuffleIcon size={14} />
         Randomize
       </Button>
+
+      <Separator />
+
+      <ExportSection config={config} />
+    </div>
+  )
+}
+
+const SIZE_PRESETS = [
+  { label: "Icon", value: 512, title: "512×512 — app icons, favicons" },
+  { label: "HD", value: 1080, title: "1080×1080 — social media, print" },
+  { label: "2K", value: 2048, title: "2048×2048 — high-res print" },
+  { label: "4K", value: 4096, title: "4096×4096 — large format / posters" },
+] as const
+
+type SizePreset = (typeof SIZE_PRESETS)[number]["value"]
+
+function ExportSection({ config }: { config: MandalaConfig }) {
+  const [withAnimation, setWithAnimation] = useState(true)
+  const [withBackground, setWithBackground] = useState(true)
+  const [size, setSize] = useState<SizePreset>(2048)
+  const [exporting, setExporting] = useState(false)
+
+  const handleExport = () => {
+    setExporting(true)
+    // defer to next tick so the button state updates before the heavy SVG build
+    setTimeout(() => {
+      try {
+        const svg = buildMandalaSvg(config, {
+          withAnimation,
+          withBackground,
+          size,
+        })
+        downloadSvg(svg, `mandala-${config.seed}-${size}.svg`)
+      } finally {
+        setExporting(false)
+      }
+    }, 0)
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Label className="text-xs tracking-widest text-muted-foreground uppercase">
+        Export SVG
+      </Label>
+
+      <div className="flex flex-col gap-1.5">
+        <Label className="text-xs text-foreground/60">Size</Label>
+        <div className="grid grid-cols-4 gap-1">
+          {SIZE_PRESETS.map((preset) => (
+            <button
+              key={preset.value}
+              type="button"
+              title={preset.title}
+              onClick={() => setSize(preset.value)}
+              className={[
+                "rounded-md border py-1 text-xs font-medium transition-colors",
+                size === preset.value
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-border bg-transparent text-foreground/70 hover:border-foreground/40 hover:text-foreground",
+              ].join(" ")}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+        <p className="text-[10px] text-muted-foreground">
+          {SIZE_PRESETS.find((p) => p.value === size)?.title}
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <Label
+          htmlFor="export-animate"
+          className="text-xs text-foreground/80"
+          title="Include SMIL animation — the exported SVG will spin when opened in a browser"
+        >
+          Animated
+        </Label>
+        <Switch
+          id="export-animate"
+          checked={withAnimation}
+          onCheckedChange={setWithAnimation}
+          aria-label="Include animation in SVG export"
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <Label
+          htmlFor="export-bg"
+          className="text-xs text-foreground/80"
+          title="Include the background color rectangle in the exported SVG"
+        >
+          Background
+        </Label>
+        <Switch
+          id="export-bg"
+          checked={withBackground}
+          onCheckedChange={setWithBackground}
+          aria-label="Include background in SVG export"
+        />
+      </div>
+      <Button
+        variant="outline"
+        className="w-full gap-2"
+        onClick={handleExport}
+        disabled={exporting}
+        aria-label="Download mandala as SVG file"
+      >
+        <DownloadSimpleIcon size={14} />
+        {exporting ? "Building…" : "Download SVG"}
+      </Button>
     </div>
   )
 }
@@ -375,7 +488,6 @@ interface SliderFieldProps {
   onValueChange: (v: number[]) => void
   format?: (v: number) => string
   title?: string
-  description?: string
 }
 
 function SliderField({
@@ -389,7 +501,6 @@ function SliderField({
   onValueChange,
   format,
   title,
-  description,
 }: SliderFieldProps) {
   const id = `slider-${label.toLowerCase().replace(/\s+/g, "-")}`
 
@@ -399,7 +510,7 @@ function SliderField({
         <Label
           htmlFor={id}
           className="text-xs tracking-widest text-muted-foreground uppercase"
-          title={title || description}
+          title={title}
         >
           {label}
         </Label>
@@ -462,7 +573,6 @@ function parseOklchColor(colorString: string): OklchColor {
     }
   }
 
-  // Fallback to default if parsing fails
   return { l: 0.5, c: 0.1, h: 0 }
 }
 
@@ -479,13 +589,11 @@ function ColorField({
   label,
   value,
   onChange,
-  compact = false,
   mobile = false,
 }: {
   label: string
   value: string
   onChange: (v: string) => void
-  compact?: boolean
   mobile?: boolean
 }) {
   const baseId = `color-${label.toLowerCase()}`
@@ -499,7 +607,6 @@ function ColorField({
   if (mobile) {
     return (
       <div className="flex flex-col gap-3 pl-1">
-        {/* Color swatch preview - larger for touch */}
         <div
           id={`${baseId}-swatch`}
           className="h-12 w-full rounded-md border-2 border-border"
@@ -508,7 +615,6 @@ function ColorField({
           aria-label={`${label} color preview: ${value}`}
         />
 
-        {/* Brightness slider */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <Label
@@ -532,7 +638,6 @@ function ColorField({
           />
         </div>
 
-        {/* Saturation slider */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <Label
@@ -556,7 +661,6 @@ function ColorField({
           />
         </div>
 
-        {/* Color slider */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <Label
@@ -577,103 +681,6 @@ function ColorField({
             max={360}
             step={1}
             onValueChange={([v]) => updateColor({ h: v })}
-          />
-        </div>
-      </div>
-    )
-  }
-
-  if (compact) {
-    return (
-      <div className="flex flex-col gap-2">
-        <Label
-          htmlFor={`${baseId}-swatch`}
-          className="text-[9px] tracking-wider text-muted-foreground uppercase"
-        >
-          {label}
-        </Label>
-
-        {/* Color swatch preview */}
-        <div
-          id={`${baseId}-swatch`}
-          className="h-6 w-full rounded-sm border border-border"
-          style={{ backgroundColor: value }}
-          role="img"
-          aria-label={`${label} color preview: ${value}`}
-        />
-
-        {/* Brightness slider */}
-        <div className="flex flex-col gap-0.5">
-          <div className="flex items-center justify-between">
-            <Label
-              htmlFor={`${baseId}-l`}
-              className="text-[8px] tracking-wider text-muted-foreground/70 uppercase"
-              title="Brightness: how light or dark the color is"
-            >
-              Brightness
-            </Label>
-            <span className="text-[8px] text-foreground/50 tabular-nums">
-              {(color.l * 100).toFixed(0)}%
-            </span>
-          </div>
-          <Slider
-            id={`${baseId}-l`}
-            value={[color.l]}
-            min={0}
-            max={1}
-            step={0.02}
-            onValueChange={([v]) => updateColor({ l: v })}
-            className="h-1"
-          />
-        </div>
-
-        {/* Saturation slider */}
-        <div className="flex flex-col gap-0.5">
-          <div className="flex items-center justify-between">
-            <Label
-              htmlFor={`${baseId}-c`}
-              className="text-[8px] tracking-wider text-muted-foreground/70 uppercase"
-              title="Saturation: how vivid or muted the color is"
-            >
-              Saturation
-            </Label>
-            <span className="text-[8px] text-foreground/50 tabular-nums">
-              {(color.c * 100).toFixed(0)}%
-            </span>
-          </div>
-          <Slider
-            id={`${baseId}-c`}
-            value={[color.c]}
-            min={0}
-            max={0.4}
-            step={0.01}
-            onValueChange={([v]) => updateColor({ c: v })}
-            className="h-1"
-          />
-        </div>
-
-        {/* Color slider */}
-        <div className="flex flex-col gap-0.5">
-          <div className="flex items-center justify-between">
-            <Label
-              htmlFor={`${baseId}-h`}
-              className="text-[8px] tracking-wider text-muted-foreground/70 uppercase"
-              title="Color: the shade from red around the color wheel"
-            >
-              Color
-            </Label>
-            <span className="text-[8px] text-foreground/50 tabular-nums">
-              {color.h.toFixed(0)}°
-            </span>
-          </div>
-          <Slider
-            id={`${baseId}-h`}
-            value={[color.h]}
-            min={0}
-            max={360}
-            step={1}
-            onValueChange={([v]) => updateColor({ h: v })}
-            className="h-1"
           />
         </div>
       </div>
@@ -698,7 +705,6 @@ function ColorField({
         aria-label={`${label} color preview: ${value}`}
       />
 
-      {/* Brightness slider */}
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <Label
@@ -723,7 +729,6 @@ function ColorField({
         />
       </div>
 
-      {/* Saturation slider */}
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <Label
@@ -748,7 +753,6 @@ function ColorField({
         />
       </div>
 
-      {/* Color slider */}
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <Label
