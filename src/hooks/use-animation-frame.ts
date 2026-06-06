@@ -1,51 +1,31 @@
-import { useEffect, useRef } from "react";
-
-interface UseAnimationFrameOptions {
-    enabled?: boolean;
-}
+import { useEffect } from "react";
 
 export function useAnimationFrame(
     callback: (deltaTime: number) => void,
-    options: UseAnimationFrameOptions = {},
+    enabled = true,
 ) {
-    const { enabled = true } = options;
-
-    const frameRef = useRef<number | null>(null);
-    const previousTimeRef = useRef<number | null>(null);
-
     useEffect(() => {
         if (!enabled) {
             return;
         }
 
-        const animate = (timestamp: number) => {
-            const previous =
-                previousTimeRef.current ?? timestamp;
+        let frameId = 0;
+        let previousTime = performance.now();
 
-            const deltaTime =
-                timestamp - previous;
+        const loop = (time: number) => {
+            const deltaTime = time - previousTime;
 
-            previousTimeRef.current =
-                timestamp;
+            previousTime = time;
 
             callback(deltaTime);
 
-            frameRef.current =
-                requestAnimationFrame(animate);
+            frameId = requestAnimationFrame(loop);
         };
 
-        frameRef.current =
-            requestAnimationFrame(animate);
+        frameId = requestAnimationFrame(loop);
 
         return () => {
-            if (frameRef.current !== null) {
-                cancelAnimationFrame(
-                    frameRef.current,
-                );
-            }
-
-            previousTimeRef.current =
-                null;
+            cancelAnimationFrame(frameId);
         };
-    }, [enabled, callback]);
+    }, [callback, enabled]);
 }
