@@ -1,4 +1,7 @@
-import { interpolate } from "culori";
+import {
+    formatCss,
+    interpolate,
+} from "culori";
 
 import type {
     MandalaColors,
@@ -22,7 +25,9 @@ export function getRingColor(
         "oklch",
     );
 
-    return gradient(progress);
+    return formatCss(
+        gradient(progress),
+    );
 }
 
 export function withAlpha(
