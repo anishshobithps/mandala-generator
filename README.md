@@ -1,33 +1,31 @@
 # The Mandala Studio
 
-A beautifully crafted, interactive mandala design generator built with React, TypeScript, and Vite. Create infinite unique mandala patterns with customizable parameters, animations, and color schemes.
+![GitHub Health](https://shieldcn.dev/group/github/stars/anishshobithps/themandalastudio+github/last-commit/anishshobithps/themandalastudio+github/commits/anishshobithps/themandalastudio+github/license/anishshobithps/themandalastudio.svg?variant=secondary)
+
+An interactive mandala design generator built with React 19, TypeScript, and Vite. Generates infinite unique mandala patterns rendered as SVG with configurable parameters, animations, and color schemes.
 
 ## Tech Stack
 
 - **Frontend**: React 19 + TypeScript
-- **Build Tool**: Vite
-- **UI Components**: Radix UI + Custom UI layer with shadcn/ui patterns
-- **Animation**: HTML5 Canvas with requestAnimationFrame
-- **Styling**: Tailwind CSS with custom design tokens
+- **Build Tool**: Vite 8 with Rolldown
+- **Rendering**: SVG via `@svgdotjs/svg.js`
+- **UI Components**: Radix UI + shadcn/ui patterns
+- **Styling**: Tailwind CSS v4 with custom design tokens
+- **Color**: `culori` for OKLCH color manipulation and gradients
+- **URL State**: `nuqs` for seed persistence via query params
 
-## Project Structure
+## Features
 
-```
-src/
-├── components/              # React components
-│   ├── ui/                 # Reusable UI components (button, tooltip, slider, etc.)
-│   ├── mandala-canvas.tsx  # Main canvas renderer
-│   ├── control-panel.tsx   # Settings & parameter controls
-│   ├── app-footer.tsx      # Footer component
-│   └── ...
-├── hooks/                   # Custom React hooks
-├── lib/                     # Utility functions & helpers
-│   ├── patterns/           # Mandala pattern generators
-│   ├── renderer/           # Canvas rendering logic
-│   └── ...
-├── types/                   # TypeScript type definitions
-└── App.tsx                 # Main app component
-```
+- Real-time SVG mandala generation
+- 10 pattern types: petals, arcs, triangles, diamonds, polygons, waves, crosses, teardrop, chevron, lotus
+- Controls for rings (2-8), symmetry (4-24), complexity (1-10), scale, and animation speed
+- OKLCH color editor for background, primary, secondary, and accent colors
+- Fill toggle and animation toggle with configurable speed
+- Randomization with per-parameter locking
+- Seed-based generation via URL query param for reproducible and shareable patterns
+- SVG export at 512px, 1080px, 2048px, or 4096px with optional animation and background
+- Responsive layout: sidebar on desktop, bottom-sheet drawer on mobile
+- Light/dark theme with keyboard shortcut `D` to toggle
 
 ## Development
 
@@ -39,36 +37,25 @@ src/
 ### Getting Started
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Start dev server
 pnpm dev
-
-# Build for production
-pnpm build
-
-# Preview production build
-pnpm preview
 ```
 
-### Development Scripts
+### Scripts
 
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm lint` - Run ESLint
-- `pnpm type-check` - Run TypeScript type checker
+```bash
+pnpm dev          # Start dev server
+pnpm build        # Type-check and build for production
+pnpm preview      # Preview production build
+pnpm lint         # Run ESLint
+pnpm typecheck    # Run TypeScript type checker
+pnpm format       # Format with Prettier + Tailwind plugin
+```
 
-## Features
+### Environment Variables
 
-- 🎨 **Real-time mandala generation** with Canvas API
-- ⚙️ **Fine-grained controls** for rings, symmetry, complexity, scale
-- 🎬 **Smooth animations** with configurable speed
-- 🌈 **Custom color palettes** with gradient support
-- 📱 **Responsive design** for desktop and mobile
-- 🔄 **Randomization** with optional parameter locking
-- 🎯 **Seed-based generation** for reproducible patterns
+Copy `.env.example` to `.env.local` and fill in your values:
 
-## License
-
-MIT
+```
+VITE_UMAMI_WEBSITE_ID=your-umami-website-id
+```
