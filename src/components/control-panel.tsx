@@ -146,19 +146,6 @@ export function ControlPanel({
             <ScrollArea className="min-h-0 flex-1">
               <div className="px-4 py-4">{panelContent}</div>
             </ScrollArea>
-            <div className="shrink-0 border-t border-border bg-card px-4 py-3">
-              <Button
-                onClick={() => {
-                  onRandomize(locked)
-                  setDrawerOpen(false)
-                }}
-                className="w-full gap-2"
-                size="default"
-              >
-                <ShuffleIcon size={16} />
-                Randomize & Close
-              </Button>
-            </div>
           </DrawerContent>
         </Drawer>
       </div>
