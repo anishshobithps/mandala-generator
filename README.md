@@ -9,10 +9,10 @@ An interactive mandala design generator built with React 19, TypeScript, and Vit
 - **Frontend**: React 19 + TypeScript
 - **Build Tool**: Vite 8 with Rolldown
 - **Rendering**: SVG via `@svgdotjs/svg.js`
-- **UI Components**: Radix UI + shadcn/ui patterns
-- **Styling**: Tailwind CSS v4 with custom design tokens
+- **UI Components**: Radix UI + shadcn/ui
+- **Styling**: Tailwind CSS v4
 - **Color**: `culori` for OKLCH color manipulation and gradients
-- **URL State**: `nuqs` for seed persistence via query params
+- **URL State**: `nuqs` for full config persistence via query params
 
 ## Features
 
@@ -22,7 +22,8 @@ An interactive mandala design generator built with React 19, TypeScript, and Vit
 - OKLCH color editor for background, primary, secondary, and accent colors
 - Fill toggle and animation toggle with configurable speed
 - Randomization with per-parameter locking
-- Seed-based generation via URL query param for reproducible and shareable patterns
+- Full config persistence in the URL — every slider, color, and toggle is shareable and survives reload
+- Seed-based generation for reproducible patterns; manual edits encoded as a compact base64 param
 - SVG export at 512px, 1080px, 2048px, or 4096px with optional animation and background
 - Responsive layout: sidebar on desktop, bottom-sheet drawer on mobile
 - Light/dark theme with keyboard shortcut `D` to toggle
