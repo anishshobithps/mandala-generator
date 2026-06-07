@@ -49,3 +49,18 @@ export interface RendererState {
     rotation: number;
     lastTimestamp?: number;
 }
+
+export interface EncodedConfig {
+    r: number;
+    sy: number;
+    co: number;
+    sc: number;
+    sp: number;
+    an: 0 | 1;
+    fi: 0 | 1;
+    bg: [number, number, number];
+    p: [number, number, number];
+    s: [number, number, number];
+    ac: [number, number, number];
+    pt: string[];
+}

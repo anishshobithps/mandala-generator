@@ -1,6 +1,7 @@
 import {
     formatCss,
     interpolate,
+    parse,
 } from "culori";
 
 import type {
@@ -60,4 +61,20 @@ export function createRingGradient(
         formatCss(
             gradient(progress),
         );
+}
+
+export function encodeColor(color: string): [number, number, number] {
+    const parsed = parse(color);
+    if (parsed && parsed.mode === "oklch") {
+        return [
+            Math.round((parsed.l ?? 0) * 1000),
+            Math.round((parsed.c ?? 0) * 10000),
+            Math.round(parsed.h ?? 0),
+        ];
+    }
+    return [500, 1000, 0];
+}
+
+export function decodeColor([l, c, h]: [number, number, number]): string {
+    return formatCss({ mode: "oklch", l: l / 1000, c: c / 10000, h });
 }
