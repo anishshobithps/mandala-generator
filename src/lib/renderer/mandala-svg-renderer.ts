@@ -5,15 +5,12 @@ import { BASE_ROTATION_SPEED, SPEED_MULTIPLIER } from "@/lib/constants";
 import type { MandalaConfig } from "@/types/mandala";
 import type { SvgExportOptions } from "@/types/renderer";
 
-/**
- * Core drawing function. Works on any svg.js Svg instance - both the live
- * in-page view and the off-screen export container use this.
- */
 export function drawMandalaToSvg(
     draw: Svg,
     config: MandalaConfig,
     options: SvgExportOptions,
 ): void {
+    const doc = options.document ?? document;
     const size = options.size ?? 2048;
     const cx = size / 2;
     const cy = size / 2;
@@ -66,7 +63,6 @@ export function drawMandalaToSvg(
         });
     }
 
-    // Center dot
     rotatingGroup.circle(maxRadius * 0.08).center(0, 0).fill(gradient(0)).stroke("none");
 
     if (options.withAnimation) {
@@ -74,7 +70,7 @@ export function drawMandalaToSvg(
         const safeSpeed = Math.max(rotationSpeed, BASE_ROTATION_SPEED);
         const dur = ((Math.PI * 2) / safeSpeed).toFixed(2);
 
-        const animEl = document.createElementNS(
+        const animEl = doc.createElementNS(
             "http://www.w3.org/2000/svg",
             "animateTransform",
         );
@@ -88,17 +84,15 @@ export function drawMandalaToSvg(
     }
 }
 
-/**
- * Builds a complete SVG outerHTML string for download.
- * Uses an off-screen temp container so svg.js can construct the DOM.
- */
 export function buildMandalaSvg(
     config: MandalaConfig,
     options: SvgExportOptions,
 ): string {
-    const container = document.createElement("div");
-    container.style.cssText = "position:absolute;left:-9999px;top:-9999px;";
-    document.body.appendChild(container);
+    const doc = options.document ?? document;
+
+    const container = doc.createElement("div");
+    (container as HTMLDivElement).style.cssText = "position:absolute;left:-9999px;top:-9999px;";
+    doc.documentElement.appendChild(container);
 
     const draw = SVG().addTo(container).size("100%", "100%");
     draw.attr({ xmlns: "http://www.w3.org/2000/svg" });
@@ -106,11 +100,10 @@ export function buildMandalaSvg(
     drawMandalaToSvg(draw, config, options);
 
     const svgHtml = draw.node.outerHTML;
-    document.body.removeChild(container);
+    doc.documentElement.removeChild(container);
     return svgHtml;
 }
 
-/** Triggers a browser file download for the given SVG string. */
 export function downloadSvg(svgString: string, filename: string): void {
     const full = `<?xml version="1.0" encoding="UTF-8"?>\n${svgString}`;
     const blob = new Blob([full], { type: "image/svg+xml;charset=utf-8" });

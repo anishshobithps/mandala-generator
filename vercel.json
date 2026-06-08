@@ -1,12 +1,36 @@
 {
-  "rewrites": [
+  "functions": {
+    "api/og.tsx": {
+      "runtime": "nodejs22.x"
+    },
+    "api/index.ts": {
+      "runtime": "nodejs22.x"
+    }
+  },
+  "routes": [
     {
-      "source": "/stats/script.js",
-      "destination": "https://cloud.umami.is/script.js"
+      "src": "/stats/script.js",
+      "dest": "https://cloud.umami.is/script.js"
     },
     {
-      "source": "/api/send",
-      "destination": "https://cloud.umami.is/api/send"
+      "src": "/api/send",
+      "dest": "https://cloud.umami.is/api/send"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "^/$",
+      "dest": "/api/index"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
