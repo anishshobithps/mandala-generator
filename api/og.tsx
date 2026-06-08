@@ -1,3 +1,4 @@
+import "takumi-js"
 import { Renderer } from "takumi-js/node"
 import { fromJsx } from "takumi-js/helpers/jsx"
 import { compile } from "tailwindcss"
