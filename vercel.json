@@ -1,12 +1,4 @@
 {
-  "functions": {
-    "api/og.tsx": {
-      "runtime": "nodejs22.x"
-    },
-    "api/index.ts": {
-      "runtime": "nodejs22.x"
-    }
-  },
   "routes": [
     {
       "src": "/stats/script.js",
