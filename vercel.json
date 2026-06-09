@@ -1,4 +1,13 @@
 {
+  "functions": {
+    "api/og.tsx": {
+      "memory": 1024,
+      "includeFiles": "node_modules/@takumi-rs/core-linux-x64-gnu/**,node_modules/@takumi-rs/core-linux-x64-musl/**,node_modules/@takumi-rs/core-linux-arm64-gnu/**,node_modules/@takumi-rs/core-linux-arm64-musl/**"
+    },
+    "api/index.ts": {
+      "memory": 256
+    }
+  },
   "routes": [
     {
       "src": "/stats/script.js",
