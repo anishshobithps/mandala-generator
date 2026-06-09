@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react"
 import { SVG } from "@svgdotjs/svg.js"
-import { drawMandalaToSvg } from "@/lib/renderer/mandala-svg-renderer"
+import { drawMandalaToSvgBrowser } from "@/lib/renderer/mandala-svg-browser"
 import type { MandalaConfig } from "@/types/mandala"
 
 interface MandalaCanvasProps {
@@ -21,7 +21,7 @@ export function MandalaCanvas({ config }: MandalaCanvasProps) {
     const draw = SVG().addTo(container).size("100%", "100%")
     draw.attr({ xmlns: "http://www.w3.org/2000/svg" })
 
-    drawMandalaToSvg(draw, config, {
+    drawMandalaToSvgBrowser(draw, config, {
       withAnimation: config.animate,
       withBackground: true,
       size: LIVE_SIZE,

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "WebWorker"],
     "types": ["node"],
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -15,10 +15,5 @@
       "@/*": ["../src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": [
-    "../src/main.tsx",
-    "../src/components/control-panel.tsx",
-    "../node_modules"
-  ]
+  "files": ["og.tsx", "index.ts", "mandala-svg-server.ts"]
 }

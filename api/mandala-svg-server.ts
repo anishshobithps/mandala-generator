@@ -11,6 +11,6 @@ export function buildMandalaSvgServer(config: MandalaConfig, size = 800): string
         withAnimation: false,
         withBackground: true,
         size,
-        document: svgWindow.document as unknown as Document,
+        document: svgWindow.document as never,
     });
 }
